@@ -1,5 +1,7 @@
 ---
  - name: Configure CI server
    hosts: ci
+   remote_user: root
+   become: true
    roles:
-     -{jenkins}
+     - jenkins
