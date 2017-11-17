@@ -5,7 +5,7 @@ Vagrant.configure("2") do |config|
     v.cpus = 2
    end
    config.vm.define "ci" do |ci|
-    ci.vm.network "forward_port", quest: 8080, host: 8080
+    ci.vm.network "forwarded_port", guest: 8080, host: 8080
     ci.vm.provision "ansible" do |ansible|
       ansible.playbook = "provisioning/ci-configuration.yml"
     end
