@@ -19,13 +19,19 @@
      name: jenkins
      state: present
 
-- name: Start jenkins
-  service: name=jenkins state=started
-
 - name: Copy jenkins.service file
   copy:
    src: ../files/jenkins.service
    dest: /etc/systemd/system/jenkins.service 
   sudo: true
 
+- name: Start jenkins service
+  systemd:
+    state: started
+    daemon_reload: yes
+    name: jenkins.service
 
+- name: Delete init file for jenkins
+  file:
+   path: /etc/init.d/jenkins
+   state: absent

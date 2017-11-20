@@ -5,3 +5,4 @@
    become: true
    roles:
      - jenkins
+     - conf-jenkins

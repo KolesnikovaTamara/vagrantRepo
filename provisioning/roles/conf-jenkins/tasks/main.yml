@@ -1,0 +1,11 @@
+---
+- include_vars: ../vars/vars.yml
+- name: Create initialization scripts directory
+  file: path=/var/lib/jenkins/init.groovy.d
+        state=directory
+        owner=jenkins
+        group=jenkins
+        mode=0775
+- name: Add initialization script to setup jenkins password
+  template: src=../templates/security.groovy
+            dest=/var/lib/jenkins/init.groovy.d/security.groovy 
