@@ -1,0 +1,4 @@
+---
+jenkins_admin_username: admin
+jenkins_admin_password: 1234asdf
+jenkins_home: /var/lib/jenkins

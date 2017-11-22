@@ -9,6 +9,7 @@ Vagrant.configure("2") do |config|
     ci.vm.provision "ansible" do |ansible|
       ansible.playbook = "provisioning/ci-configuration.yml"
       ansible.vault_password_file = ".vault_pass"
+      #ansible.verbose = "-vvv"
     end
    end
    config.vm.define "stage" do |stage|

@@ -3,35 +3,18 @@
   yum:
     name: "java-1.8.0-openjdk"
     state: present
- 
-- name: Ensure Jenkins repo is installed.
+
+- name: Ensure Jenkins repo is installed
   get_url:
-     url: "https://pkg.jenkins.io/redhat-stable/jenkins.repo"
-     dest: "/etc/yum.repos.d/jenkins.repo"
+    url: "https://pkg.jenkins.io/redhat-stable/jenkins.repo"
+    dest: "/etc/yum.repos.d/jenkins.repo"
 
 - name: Add Jenkins repo GPG key.
   rpm_key:
-     state: present
-     key : "https://pkg.jenkins.io/redhat-stable/jenkins.io.key"
+    state: present
+    key : "https://pkg.jenkins.io/redhat-stable/jenkins.io.key"
 
 - name: Install Jenkins.
   package:
-     name: jenkins
-     state: present
-
-- name: Copy jenkins.service file
-  copy:
-   src: ../files/jenkins.service
-   dest: /etc/systemd/system/jenkins.service 
-  sudo: true
-
-- name: Start jenkins service
-  systemd:
-    state: started
-    daemon_reload: yes
-    name: jenkins.service
-
-- name: Delete init file for jenkins
-  file:
-   path: /etc/init.d/jenkins
-   state: absent
+    name: jenkins
+    state: present

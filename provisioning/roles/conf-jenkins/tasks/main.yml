@@ -1,11 +1,36 @@
 ---
-- include_vars: ../vars/vars.yml
+- include_vars: "{{ role_path }}/vars/main.yml"
+
+- name: Copy jenkins.service file
+  template:
+    src: "{{ role_path }}/templates/jenkins.service.j2"
+    dest: /etc/systemd/system/jenkins.service
+
 - name: Create initialization scripts directory
-  file: path=/var/lib/jenkins/init.groovy.d
-        state=directory
-        owner=jenkins
-        group=jenkins
-        mode=0775
+  file:
+    path: "{{ jenkins_home }}/init.groovy.d"
+    state: directory
+    owner: jenkins
+    group: jenkins
+    mode: 0775
+
 - name: Add initialization script to setup jenkins password
-  template: src=../templates/security.groovy
-            dest=/var/lib/jenkins/init.groovy.d/security.groovy 
+  template:
+    src: "{{ role_path }}/templates/security.groovy.j2"
+    dest: "{{ jenkins_home }}/init.groovy.d/security.groovy"
+
+- name: Start jenkins service
+  systemd:
+    state: started
+    enabled: yes
+    daemon_reload: yes
+    name: jenkins.service
+
+- name: Wait jenkins
+  wait_for:
+     port: 8080
+
+- name: Delete security.groovy file
+  file:
+    path: "{{ jenkins_home }}/init.groovy.d/security.groovy"
+    state: absent
