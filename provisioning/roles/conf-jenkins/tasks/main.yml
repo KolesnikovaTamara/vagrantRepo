@@ -34,3 +34,14 @@
   file:
     path: "{{ jenkins_home }}/init.groovy.d/security.groovy"
     state: absent
+
+- name: Install pipeline plugin
+  jenkins_plugin:
+    name: "{{ item }}"
+  with_list: "{{ jenkins_plugins }}"
+  timeout: 1000
+
+- name: Start jenkins service
+  systemd:
+    state: restarted
+    name: jenkins.service
