@@ -46,7 +46,7 @@
     path: "{{ jenkins_home }}/init.groovy.d/security.groovy"
     state: absent
 
-- name: Install plugin
+- name: Install plugins
   jenkins_plugin:
     name: "{{ item }}"
     timeout: 1000
