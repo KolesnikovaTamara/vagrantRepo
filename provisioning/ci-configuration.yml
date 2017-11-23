@@ -4,5 +4,5 @@
    remote_user: root
    become: true
    roles:
-     - jenkins
-     - conf-jenkins
+     - jenkins-install
+     - jenkins-conf

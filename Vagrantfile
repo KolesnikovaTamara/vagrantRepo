@@ -8,7 +8,7 @@ Vagrant.configure("2") do |config|
     ci.vm.network "forwarded_port", guest: 8080, host: 8080
     ci.vm.provision "ansible" do |ansible|
       ansible.playbook = "provisioning/ci-configuration.yml"
-      ansible.vault_password_file = ".vault_pass"
+      ansible.vault_password_file = "provisioning/.vault_pass"
       #ansible.verbose = "-vvv"
     end
    end
