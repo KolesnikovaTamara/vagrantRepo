@@ -1,6 +1,11 @@
 ---
 - include_vars: "{{role_path}}/vars/main.yml"
 
+- name: Upgrade all packages
+  yum:
+    name: "*"
+    state: latest
+
 - name: Install software
   yum:
     name: "{{ item }}"
