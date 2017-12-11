@@ -1,0 +1,17 @@
+- name: Copy Maven archive
+  get_url:
+    url: "http://apache-mirror.rbc.ru/pub/apache/maven/maven-3/3.5.2/binaries/apache-maven-3.5.2-bin.tar.gz"
+    dest: /tmp/apache-maven-3.5.2-bin.tar.gz
+    timeout: 4000
+
+- name: Install Maven
+  unarchive:
+    src: /tmp/apache-maven-3.5.2-bin.tar.gz
+    dest: /opt/
+    copy: no
+
+- name: Set MAVEN_HOME
+  template:
+    src: "{{ role_path }}/templates/maven.sh.j2"
+    dest: /etc/profile.d/maven.sh
+    mode: 0644

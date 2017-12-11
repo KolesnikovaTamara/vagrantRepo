@@ -1,6 +1,4 @@
 ---
-- include_vars:
-     dir: "{{ role_path }}/vars"
 - name: Copy jenkins.service file
   template:
     src: "{{ role_path }}/templates/jenkins.service.j2"

@@ -1,0 +1,7 @@
+---
+ - name: Configure Stage server
+   hosts: stage
+   become: true
+   roles:
+     - stage-common
+     - createdb

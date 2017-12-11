@@ -1,0 +1,34 @@
+---
+- name: Configure host based authentication
+  template:
+    src: "templates/pg_hba.conf.j2"
+    dest: /var/lib/pgsql/9.3/data/pg_hba.conf
+    owner: postgres
+    group: postgres
+    mode: 0600
+
+- name: Enable remote connections to postgersql server
+  lineinfile:
+    path: /var/lib/pgsql/9.3/data/postgresql.conf
+    regexp: "^#listen_addresses"
+    line: listen_addresses = '*'
+
+- name: Ensure the PostgreSQL service is running
+  service:
+    name: postgresql-9.3
+    state: started
+    enabled: yes
+
+- name: Create "{{ db_user }}"  database user
+  postgresql_user:
+    name: "{{ db_user }}"
+    password: "{{ db_password }}"
+    role_attr_flags: CREATEDB
+    state: present
+
+
+- name: Create "{{ db_user }}" database
+  postgresql_db:
+    name: "{{ db_name }}"
+    owner: "{{ db_user }}"
+    state: present

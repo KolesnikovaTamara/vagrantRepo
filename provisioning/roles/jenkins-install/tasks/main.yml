@@ -1,8 +1,8 @@
 ---
-- name: Install OpenJDK Java
-  yum:
-    name: "java-1.8.0-openjdk"
-    state: present
+#- name: Install OpenJDK Java
+#  yum:
+#    name: "java-1.8.0-openjdk"
+#    state: present
 
 - name: Ensure Jenkins repo is installed
   get_url:

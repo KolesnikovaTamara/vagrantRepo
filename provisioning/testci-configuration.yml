@@ -1,0 +1,8 @@
+---
+ - name: Configure test CI server
+   hosts: testci
+   become: true
+   roles:
+     - ci-common
+     - maven-install
+     - deploy

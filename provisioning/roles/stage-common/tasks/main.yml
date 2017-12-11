@@ -1,0 +1,113 @@
+---
+#- name: Upgrade all packages
+#  yum:
+#    name: "*"
+#    state: latest
+
+- name: Copy oracle jre RMP file
+  get_url:
+    url: "http://download.oracle.com/otn-pub/java/jdk/8u151-b12/e758a0de34e24606bca991d704f6dcbf/jre-8u151-linux-x64.rpm"
+    headers: 'Cookie:oraclelicense=accept-securebackup-cookie'
+    dest: /tmp/jre-8u151-linux-i586.rpm
+
+- name: Install JRK via RPM file with yum
+  yum:
+    name: /tmp/jre-8u151-linux-i586.rpm
+    state: present
+
+- name: Set JAVA_HOME
+  template:
+    src: "{{ role_path }}/templates/java_home.sh.j2"
+    dest: /etc/profile.d/java_home.sh
+    mode: 0644
+
+- name: Download tomcat tar.gz
+  get_url:
+    url: "{{ tomcat_url }}"
+    dest: /tmp/tomcat.tar.gz
+    timeout: 4000
+
+- name: Creates directory for tomcat
+  file:
+    path: /opt/tomcat
+    state: directory
+
+- name: Unarchive tomcat
+  unarchive:
+    src: /tmp/tomcat.tar.gz
+    dest: /opt/tomcat
+    copy: no
+    extra_opts: "--strip-components=1"
+
+- name: Download catalina-jmx-remote.jar
+  get_url:
+    url: "{{ jmx_url }}"
+    dest: /opt/tomcat/lib
+    timeout: 4000
+
+- name: Clear /opt/tomcat/webapps directory
+  file:
+    state: absent
+    path: /opt/tomcat/webapps/
+
+- name: Add group for Tomcat
+  group:
+    name: tomcat
+
+- name: Add user for Tomcat
+  user:
+    name: tomcat
+    group: tomcat
+    home: /opt/tomcat
+    shell: /bin/nologin
+
+- name: Change ownership of Tomcat installation
+  file:
+    path: /opt/tomcat
+    owner: tomcat
+    group: tomcat
+    state: directory
+    recurse: yes
+
+- name: Add vagrant user to tomcat group
+  user:
+    name: vagrant
+    groups: tomcat
+    append: yes
+
+- name: Copy tomcat.service file
+  template:
+    src: "{{ role_path }}/templates/tomcat.service.j2"
+    dest: /etc/systemd/system/tomcat.service
+
+- name: Enable Tomcat Service
+  service:
+    name: tomcat
+    enabled: yes
+    state: started
+    daemon-reload: yes
+
+- name: "Stage 1: install repository package"
+  yum:
+    state: present
+    pkg: "https://download.postgresql.org/pub/repos/yum/9.3/redhat/rhel-7-x86_64/pgdg-centos93-9.3-2.noarch.rpm"
+
+- name: Install PostgreSQL
+  become: yes
+  yum:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - postgresql93
+    - postgresql93-server
+
+- name: Install dependencies for the Ansible module
+  become: yes
+  yum:
+    name: "{{item}}"
+    state: latest
+  with_items:
+    - python-psycopg2
+
+- name: Init postgresql
+  command: sh /usr/pgsql-9.3/bin/postgresql93-setup initdb

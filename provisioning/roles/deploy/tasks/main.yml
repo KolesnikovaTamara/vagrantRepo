@@ -1,0 +1,19 @@
+- name: Copy pmo-tools archive
+  unarchive:
+    src: /Users/tkolesnikova/pmo-tools.tar.gz
+    dest: /
+
+- name: Replace database url in pom.xml
+  replace:
+    path: /pmo-tools/pm-office/pom.xml
+    regexp: <jdbc\.url>jdbc:postgresql://pmo-tool\.vm\.griddynamics\.net:5432/pmotest</jdbc\.url>
+    replace: <jdbc.url>jdbc:postgresql://192.168.0.2:5432/pmotest</jdbc.url>
+
+- name: Compile pmo-office  mvn
+  shell: /opt/apache-maven-3.5.2/bin/mvn clean package -P test --file /pmo-tools/pm-office/pom.xml
+
+- name: Copy private key
+  copy:
+    src: /Users/tkolesnikova/Vagrant/.vagrant/machines/stage/virtualbox/private_key
+    dest: /home/vagrant/.ssh/
+    

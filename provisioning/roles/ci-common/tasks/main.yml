@@ -1,0 +1,30 @@
+---
+- include_vars: "{{role_path}}/vars/main.yml"
+
+- name: Upgrade all packages
+  yum:
+    name: "*"
+    state: latest
+- name: Install git and Ansible
+  yum:
+    name: "{{ item }}"
+    state: latest
+  with_items: "{{ software_list }}"
+
+- name: Copy oracle java RMP file
+  get_url:
+    url: "http://download.oracle.com/otn-pub/java/jdk/8u151-b12/e758a0de34e24606bca991d704f6dcbf/jdk-8u151-linux-x64.rpm"
+    headers: 'Cookie:oraclelicense=accept-securebackup-cookie'
+    dest: /tmp/jdk-8u151-linux-x64.rpm
+
+- name: Install JDK via RPM file with yum
+  yum:
+    name: /tmp/jdk-8u151-linux-x64.rpm
+    state: present
+
+
+- name: Set JAVA_HOME
+  template:
+    src: "{{ role_path }}/templates/java_home.sh.j2"
+    dest: /etc/profile.d/java_home.sh
+    mode: 0644
